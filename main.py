@@ -12,6 +12,15 @@ ATTEMPTS: int = 5
 # создаем словарь с состояниями пользователей
 users: dict = {}
 
+random_stickers = {1:'CAACAgIAAxkBAAIBsGRPfevCf87UOSqhQN32GVryerIJAAKQEAACa16oSBwaTsyegEWYLwQ',
+                   2:'CAACAgIAAxkBAAIBsmRPfmUOO_fITHL20uQrHqdF0w4GAAIQAAPANk8T6oGKKfEfAugvBA',
+                   3:'CAACAgIAAxkBAAIBtGRPfn4ckTudthWmT1Cm4RrY2RzXAAIVAAPANk8TzVamO2GeZOcvBA',
+                   4:'CAACAgIAAxkBAAIBtmRPfs7SeU0-O09GDl-QtZkuFFkHAAIDAAPANk8TpCnu5n3zwHgvBA',
+                   5:'CAACAgIAAxkBAAIBuGRPfvXNotS9KAf1zsY2i2-8gzQPAAJCEAACM8UpSZAO1BGnKkqCLwQ',
+                   6:'CAACAgIAAxkBAAIBumRPfxWPewES54OYIzMxwloKtM-WAAIUAAPANk8TrWWZ5Lkw9j4vBA',
+                   7:'CAACAgIAAxkBAAIB02RPgdzCRSwzRmVJBtOJuAgyZUA1AAIYAAPANk8T1vonv5xqGPgvBA',
+                   8:'CAACAgIAAxkBAAIB22RPglY5656l46NL_rV2wJYNsWFLAAJaAAPANk8TC_wPT9xGGeEvBA'
+                   }
 
 def random_digits() -> int:
     return random.randint(1, 100)
@@ -51,7 +60,7 @@ async def command_cancel(msg: Message):
 
 async def positiv_answer(msg: Message):
     if not users[msg.from_user.id]['in_game']:
-        await msg.answer('Хорошо! Я загадал число от 1 до 100,\nпопробуй его угадать.')
+        await msg.answer(f'Хорошо! Я загадал число от 1 до 100,\nпопробуй его угадать.')
         users[msg.from_user.id]['in_game'] = True
         users[msg.from_user.id]['secret_numbers'] = random_digits()
         users[msg.from_user.id]['attempts'] = ATTEMPTS
@@ -72,10 +81,11 @@ async def numbers_answer(msg: Message):
     if users[msg.from_user.id]['in_game']:
         if int(msg.text) == users[msg.from_user.id]['secret_numbers']:  # type: ignore
             await msg.answer('Ура! Вы угадали!\n\nМожет сыграем еще?')
+            await msg.answer_sticker(random_stickers[random.randint(1,8)])
             users[msg.from_user.id]['in_game'] = False
             users[msg.from_user.id]['total_games'] += 1
             users[msg.from_user.id]['wins'] += 1
-        elif int(msg.text) > users[msg.from_user.id]['secret_numbers']:  # type: ignore
+        elif int(msg.text) > users[msg.from_user.id]['secret_numbers']:
             users[msg.from_user.id]['attempts'] -= 1
             await msg.answer(f'Ваше число больше.\nПопробуйте еще раз.\nУ вас осталось '
                              f'{users[msg.from_user.id]["attempts"]} попыток.')
