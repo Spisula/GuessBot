@@ -44,6 +44,7 @@ async def command_cancel(msg: Message):
     if users[msg.from_user.id]['in_game']:  # type: ignore
         await msg.answer('Вы вышли из игры. Если захотите сыграть '
                              'снова - напишите об этом')
+        users[msg.from_user.id]['in_game'] = False
     if users[msg.from_user.id]['in_game'] == False:
         await msg.answer('А мы итак не играем. Может начнем игру?')
 
@@ -95,10 +96,13 @@ async def numbers_answer(msg: Message):
 
 #@dp.message()
 async def other_answer(msg: Message):
-    if users[msg.from_user.id]['in_game']:
+    if msg.from_user.id not in users:
+        await msg.answer('Для начала игры нажмите /start')
+    elif users[msg.from_user.id]['in_game']:
         await msg.answer('Мы же сейчас играем.\nПришлите, пожалуйста цифру от 1 до 100')
     else:
-        await msg.answer('Я не понимаю. Давайте просто поиграем.')
+        await msg.answer('Я не понимаю. Давайте просто поиграем.\nВы можете написать '
+                         'утвердительное или отрицательное сообщение.')
 
 
 dp.message.register(command_start, Command('start')) # зарегистрировали хэндлер старт в диспетчере
